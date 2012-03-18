@@ -43,8 +43,10 @@
 /** Add a variable to track last element matched */
 ruleDeclarations() ::= <<
 <super.ruleDeclarations()>
+<if(!ruleDescriptor.isSynPred)>
 <ASTLabelType> _last;<\n>
 <ASTLabelType> _first_0;<\n>
+<endif>
 >>
 
 /** Add a variable to track last element matched */
@@ -58,6 +60,7 @@ _first_0 = NULL;<\n>
  *  mode, does nothing.
  */
 noRewrite(rewriteBlockLevel, treeLevel) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <if(backtracking)>if ( BACKTRACKING ==0 ) {<endif>
 <if(rewriteMode)>
 retval.tree = (<ASTLabelType>)_first_0;
@@ -67,6 +70,7 @@ if ( ADAPTOR->getParent(ADAPTOR, retval.tree) != NULL && ADAPTOR->isNilNode(ADAP
 }
 <endif>
 <if(backtracking)>}<endif>
+<endif>
 >>
 
 /** match ^(root children) in tree parser; override here to
@@ -113,6 +117,9 @@ ADAPTOR->addChild(ADAPTOR, root_<enclosingTreeLevel>, root_<treeLevel>);
 <endif>
 _last = _save_last_<treeLevel>;
 }<\n>
+<else>
+<super.tree(...)>
+<endif>
 >>
 
 // TOKEN AST STUFF
@@ -121,12 +128,17 @@ _last = _save_last_<treeLevel>;
  *  setting of _last
  */
 tokenRefBang(token,label,elementIndex,terminalOptions) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.tokenRef(...)>
+<else>
+<super.tokenRefBang(...)>
+<endif>
 >>
 
 /** ID auto construct */
 tokenRef(token,label,elementIndex,terminalOptions) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.tokenRef(...)>
 <if(!rewriteMode)>
@@ -143,16 +155,24 @@ ADAPTOR->addChild(ADAPTOR, root_<treeLevel>, <label>_tree);
 if ( _first_<treeLevel> == NULL ) _first_<treeLevel> = <label>;
 <if(backtracking)>}<endif>
 <endif>
+<else>
+<super.tokenRef(...)>
+<endif>
 >>
 
 /** label+=TOKEN auto construct */
 tokenRefAndListLabel(token,label,elementIndex,terminalOptions) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <tokenRef(...)>
 <listLabel(elem=label,...)>
+<else>
+<super.tokenRefAndListLabel(...)>
+<endif>
 >>
 
 /** ^(ID ...) auto construct */
 tokenRefRuleRoot(token,label,elementIndex,terminalOptions) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.tokenRef(...)>
 <if(!rewriteMode)>
@@ -165,16 +185,24 @@ _last = (<ASTLabelType>)LT(1);
 root_<treeLevel> = (<ASTLabelType>)ADAPTOR->becomeRoot(ADAPTOR, <label>_tree, root_<treeLevel>);
 <if(backtracking)>}<endif>
 <endif>
+<else>
+<super.tokenRefRuleRoot(...)>
+<endif>
 >>
 
 /** Match ^(label+=TOKEN ...) auto construct */
 tokenRefRuleRootAndListLabel(token,label,elementIndex,terminalOptions) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <tokenRefRuleRoot(...)>
 <listLabel(elem=label,...)>
+<else>
+<super.tokenRefRuleRootAndListLabel(...)>
+<endif>
 >>
 
 /** Match . wildcard and auto dup the node/subtree */
 wildcard(token,label,elementIndex,terminalOptions) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.wildcard(...)>
 <if(!rewriteMode)>
@@ -186,11 +214,15 @@ ADAPTOR->addChild(ADAPTOR, root_<treeLevel>, <label>_tree);
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> )<endif>
 if ( _first_<treeLevel>==null ) _first_<treeLevel> = <label>;
 <endif>
+<else>
+<super.wildcard(...)>
+<endif>
 >>
 
 // SET AST
 
 matchSet(s,label,terminalOptions,elementIndex,postmatchCode) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.matchSet(postmatchCode={
 <if(!rewriteMode)>
@@ -205,19 +237,31 @@ ADAPTOR->addChild(ADAPTOR, root_<treeLevel>, <label>_tree);
 <endif>
 }
 ,...)>
+<else>
+<super.matchSet(...)>
+<endif>
 >>
 
 matchRuleBlockSet(s,label,terminalOptions,elementIndex,postmatchCode,treeLevel="0") ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <matchSet(...)>
 <noRewrite()> <! set return tree !>
+<else>
+<super.matchRuleBlockSet(...)>
+<endif>
 >>
 
 matchSetBang(s,label,terminalOptions,elementIndex,postmatchCode) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.matchSet(...)>
+<else>
+<super.matchSetBang(...)>
+<endif>
 >>
 
 matchSetRuleRoot(s,label,terminalOptions,elementIndex,debug) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <super.matchSet(postmatchCode={
 <if(!rewriteMode)>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> ){<endif>
@@ -231,12 +275,16 @@ root_<treeLevel> = (<ASTLabelType>)ADAPTOR->becomeRoot(ADAPTOR, <label>_tree, ro
 <endif>
 }, ...
 )>
+<else>
+<super.matchSetRuleRoot(...)>
+<endif>
 >>
 
 // RULE REF AST
 
 /** rule auto construct */
 ruleRef(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.ruleRef(...)>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> )
@@ -248,27 +296,42 @@ _last = (<ASTLabelType>)LT(1);
 	if ( _first_<treeLevel> == NULL ) _first_<treeLevel> = <label>.tree;
 <endif>
 <if(backtracking)>}<endif>
+<else>
+<super.ruleRef(...)>
+<endif>
 >>
 
 /** x+=rule auto construct */
 ruleRefAndListLabel(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <ruleRef(...)>
 <super.listLabelAST(elem=label,...)>
+<else>
+<super.ruleRefAndListLabel(...)>
+<endif>
 >>
 
 /** ^(rule ...) auto construct */
 ruleRefRuleRoot(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.ruleRef(...)>
 <if(!rewriteMode)>
 <if(backtracking)>if ( ( <actions.(actionScope).synpredgate> ) ) <endif>root_<treeLevel> = (<ASTLabelType>)(ADAPTOR->becomeRoot(ADAPTOR, <label>.tree, root_<treeLevel>));
 <endif>
+<else>
+<super.ruleRefRuleRoot(...)>
+<endif>
 >>
 
 /** ^(x+=rule ...) auto construct */
 ruleRefRuleRootAndListLabel(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 <ruleRefRuleRoot(...)>
 <super.listLabelAST(elem=label,...)>
+<else>
+<super.ruleRefRuleRootAndListLabel(...)>
+<endif>
 >>
 
 /** rule when output=AST and tracking for rewrite */
@@ -279,19 +342,31 @@ _last = (<ASTLabelType>)LT(1);
 
 /** x+=rule when output=AST and tracking for rewrite */
 ruleRefTrackAndListLabel(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.ruleRefTrackAndListLabel(...)>
+<else>
+<super.ruleRefTrackAndListLabel(...)>
+<endif>
 >>
 /** ^(rule ...) rewrite */
 ruleRefRuleRootTrack(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.ruleRefRootTrack(...)>
+<else>
+<super.ruleRefRootTrack(...)>
+<endif>
 >>
 
 /** ^(x+=rule ...) rewrite */
 ruleRefRuleRootTrackAndListLabel(rule,label,elementIndex,args,scope) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 <super.ruleRefRuleRootTrackAndListLabel(...)>
+<else>
+<super.ruleRefRuleRootTrackAndListLabel(...)>
+<endif>
 >>
 
 

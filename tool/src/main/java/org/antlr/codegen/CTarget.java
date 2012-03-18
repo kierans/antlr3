@@ -40,6 +40,12 @@ public class CTarget extends Target {
     List<String> strings = new ArrayList<String>();
 
     @Override
+    public boolean useBaseTemplatesForSynPredFragments() {
+        return false;
+    }
+
+
+    @Override
     protected void genRecognizerFile(Tool tool,
             CodeGenerator generator,
             Grammar grammar,

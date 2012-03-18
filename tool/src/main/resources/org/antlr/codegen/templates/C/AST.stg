@@ -74,8 +74,10 @@ root_0 = NULL;<\n>
 
 ruleLabelDefs() ::= <<
 <super.ruleLabelDefs()>
+<if(!ruleDescriptor.isSynPred)>
 <ruleDescriptor.tokenLabels:{it | <ASTLabelType> <it.label.text>_tree;}; separator="\n">
 <ruleDescriptor.tokenListLabels:{it | <ASTLabelType> <it.label.text>_tree;}; separator="\n">
+<else>
 <ruleDescriptor.allTokenRefsInAltsWithRewrites
     :{it | pANTLR3_REWRITE_RULE_<rewriteElementType>_STREAM stream_<it>;}; separator="\n">
 <ruleDescriptor.allRuleRefsInAltsWithRewrites
@@ -103,6 +105,7 @@ ruleLabelInitializations() ::= <<
 <if(ruleDescriptor.hasMultipleReturnValues)>
 retval.tree  = NULL;
 <endif>
+<endif>
 >>
 
 
@@ -127,7 +130,7 @@ ruleLabelInitVal(label) ::= <<
 @alt.initializations() ::= <<
 <if(autoAST)>
 <if(outerAlt)>
-<if(!rewriteMode)>
+<if(!rewriteMode && !ruleDescriptor.isSynPred)>
 root_0 = (<ASTLabelType>)(ADAPTOR->nilNode(ADAPTOR));<\n>
 <endif>
 <endif>
