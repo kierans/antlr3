@@ -78,6 +78,7 @@ if ( ADAPTOR->getParent(ADAPTOR, retval.tree) != NULL && ADAPTOR->isNilNode(ADAP
  */
 tree(root, actionsAfterRoot, children, nullableChildList,
      enclosingTreeLevel, treeLevel) ::= <<
+<if(!ruleDescriptor.isSynPred)>
 _last = (<ASTLabelType>)LT(1);
 {
 <ASTLabelType> _save_last_<treeLevel>;
